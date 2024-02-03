@@ -1,8 +1,16 @@
-<div id="chatbox" data-preload="basic_interface/dialscr_down.bmp;basic_interface/dialscr_up.bmp">	
+<div id="chatbox" data-preload="basic_interface/dialscr_down.bmp;basic_interface/dialscr_up.bmp">
 	<table class="header" cellpadding="0" cellspacing="0" border="0" width="100%">
 		<tbody>
 			<tr>
-				<td class="opttab"><div class="options"></div></td>
+				<td class="opttab">
+					<div class="mainopttab">
+						<div class="tab tabsettingsopt">
+							...
+						</div>
+						<div class="options"></div>
+
+					</div>
+				</td>
 			</tr>
 		</tbody>
 	</table>
@@ -20,11 +28,33 @@
 	</div>
 
 	<div class="battlemode"><button class="bmtoggle">...</button></div>
-	<div class="input" data-background="basic_interface/dialog_bg.bmp">
+
+	<!-- small chatbox ui -->
+	<div class="input small" style="display: none;" data-background="basic_interface/dialog_bg.bmp">
 		<input type="text" class="username">
-		<button class="list" data-background="basic_interface/dialog_btn0.bmp" data-hover="basic_interface/dialog_btn1.bmp" data-down="basic_interface/dialog_btn2.bmp"></button>
 		<div class="wrapper"><input type="text" class="message"></div>
-		<button class="filter" data-background="basic_interface/sys_base_off.bmp" data-down="basic_interface/sys_base_off.bmp"></button>
-		<button class="size" data-background="basic_interface/sys_base_off.bmp" data-down="basic_interface/sys_base_off.bmp"></button>
+		<button class="list" data-background="basic_interface/dialog_btn0.bmp"
+			data-hover="basic_interface/dialog_btn1.bmp" data-down="basic_interface/dialog_btn2.bmp"></button>
+		<button class="filter" data-background="basic_interface/sys_base_off.bmp"
+			data-down="basic_interface/sys_base_off.bmp"></button>
+		<button class="size" data-background="basic_interface/sys_base_off.bmp"
+			data-down="basic_interface/sys_base_off.bmp"></button>
+	</div>
+
+	<!-- large chatbox ui -->
+	<div class="input large">
+		<div class="btn filter">
+			<button>Public</button>
+		</div>
+		<div class="incontent">
+			<input type="text" class="username" id="username">
+			<input type="text" class="message" id="message">
+		</div>
+		<div class="btn send">
+			<button>Send</button>
+		</div>
+		<div class="btn chatting">
+			<button>ChatRoom</button>
+		</div>
 	</div>
 </div>
