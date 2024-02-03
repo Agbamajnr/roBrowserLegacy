@@ -22,20 +22,20 @@ define(function (require) {
     var UIComponent = require('UI/UIComponent');
     var htmlText = require('text!./ChatBoxTabSettings.html');
     var cssText = require('text!./ChatBoxTabSettings.css');
+    var ChatBox;
     /**
      * Create Component
      */
+
     var ChatBoxTabSettings = new UIComponent('ChatBoxTabSettings', htmlText, cssText);
 
 
     /**
      * @var {boolean} is ChatBoxTabSettings open ? (Temporary fix)
      */
-    ChatBoxTabSettings.isOpen = false;
-
-    ChatBoxTabSettings.tabOption = [];
-
     ChatBoxTabSettings.activeTab = 0;
+
+    ChatBoxTabSettings.tabs = [];
 
     /**
      * @var {Preference} structure to save
@@ -48,31 +48,57 @@ define(function (require) {
     }, 1.0);
 
 
+
     /**
      * Initialize UI
      */
     ChatBoxTabSettings.init = function init() {
         // Bindings
-        console.log('initialized tab window')
         this.ui.find('.extend').mousedown(onResize);
         this.ui.find('.close').click(function () {
             ChatBoxTabSettings.ui.hide();
         });
         this.draggable(this.ui.find('.titlebar'));
+
     };
+
 
 
     /**
      * Initialize UI
      */
     ChatBoxTabSettings.onAppend = function onAppend() {
-        //resize( _preferences.width, _preferences.height );
-        console.log('appended window')
+        ChatBox = require('UI/Components/ChatBox/ChatBox');
+        ChatBoxTabSettings.tabs = ChatBox.tabs
 
         this.ui.css({
             top: Math.min(Math.max(0, _preferences.y), Renderer.height - this.ui.height()),
             left: Math.min(Math.max(0, _preferences.x), Renderer.width - this.ui.width())
         });
+
+        const listNode = this.ui.find('#settings_list')
+        listNode.empty()
+
+        if (Array.isArray(ChatBoxTabSettings.tabs) && ChatBoxTabSettings.tabs.length > 0) {
+            for (const tab of ChatBoxTabSettings.tabs) {
+                listNode.append(`
+                <div class="tab" data-tab="${tab.id}">
+                    <div  style="display:none;" class="blinking-light"></div>
+                    <h3 class="tab-name">${tab.name}</h3>
+                    <div class="remove">X</div>
+                    <div class="move">↑</div>
+                </div>
+                `);
+
+                this.ui.find(`#settings_list .tab[data-tab="${tab.id}"] .remove`).on('click', function (event) {
+                    ChatBox.switchTab(tab.id)
+                    ChatBox.removeTab()
+                })
+                this.ui.find(`#settings_list .tab[data-tab="${tab.id}"] .move`).on('click', function (event) {
+                    ChatBox.moveTabPosition(tab.id)
+                })
+            }
+        }
     };
 
     /**
@@ -82,6 +108,63 @@ define(function (require) {
      * @return {boolean}
      */
     ChatBoxTabSettings.onKeyDown = function onKeyDown(event) { };
+
+    ChatBoxTabSettings.addTab = function addTab(tab) {
+        console.log(tab)
+        ChatBoxTabSettings.tabs[tab.id] = tab
+
+        this.ui.find('#settings_list').append(`
+            <div class="tab" data-tab="${tab.id}">
+                <div style="display:none;" class="blinking-light"></div>
+                <h3 class="tab-name">${tab.name}</h3>
+                <div class="remove">X</div>
+                <div class="move">↑</div>
+            </div>
+        `);
+
+        this.ui.find(`#settings_list .tab[data-tab="${tab.id}"] .remove`).on('click', function (event) {
+            ChatBox.switchTab(tab.id)
+            ChatBox.removeTab()
+        })
+
+        this.ui.find(`#settings_list .tab[data-tab="${tab.id}"] .move`).on('click', function (event) {
+            console.log('clicked')
+            ChatBoxTabSettings.updateCellPosition(tab.id)
+            ChatBox.moveTabPosition(tab.id)
+        })
+    };
+
+    ChatBoxTabSettings.removeTab = function removeTab(tabID) {
+        console.log('removing ', tabID)
+        ChatBoxTabSettings.tabs[tabID]
+        console.log(ChatBoxTabSettings.tabs[tabID])
+        delete ChatBoxTabSettings.tabs[tabID];
+        this.ui.find('#settings_list .tab[data-tab="' + tabID + '"]').remove()
+    }
+
+
+    ChatBoxTabSettings.updateCellPosition = function updateCellPosition(tabID) {
+        var parentNode = this.ui.find('#settings_list')
+        var childNode = this.ui.find('#settings_list .tab[data-tab="' + tabID + '"]')
+        if (childNode && ChatBoxTabSettings.tabs[tabID]) {
+            childNode.remove()
+            parentNode.prepend(`
+            <div class="tab" data-tab="${tabID}">
+                <div style="display:none;" class="blinking-light"></div>
+                <h3 class="tab-name">${ChatBoxTabSettings.tabs[tabID].name}</h3>
+                <div class="remove">X</div>
+                <div class="move">↑</div>
+            </div>
+			`)
+        }
+    }
+
+    ChatBoxTabSettings.updateTabName = function updateTabName(tabID, value) {
+        this.ui.find(`#settings_list .tab[data-tab="${tabID}"] .tab-name`).text(value)
+        if (ChatBoxTabSettings.tabs[tabID]) {
+            ChatBoxTabSettings.tabs[tabID].name = value;
+        }
+    };
 
 
     /**
@@ -128,7 +211,6 @@ define(function (require) {
     }
 
     ChatBoxTabSettings.toggle = function toggle() {
-        console.log('toggling ui')
         if (this.ui.is(':visible')) {
             this.ui.hide();
         } else {

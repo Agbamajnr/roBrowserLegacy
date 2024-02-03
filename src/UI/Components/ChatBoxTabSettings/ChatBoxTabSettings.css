@@ -43,8 +43,78 @@
 
 #ChatBoxTabSettings .panel {
     background-color: white;
+    border-radius: 5px;
 }
 
 #ChatBoxTabSettings .content {
-    height: 197px;
+    min-height: 250px;
+    padding: 5px;
+}
+
+#ChatBoxTabSettings .content .lists {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    row-gap: 3px !important;
+    flex-wrap: wrap;
+    column-gap: 5px !important;
+}
+
+#ChatBoxTabSettings .content .lists .tab {
+    width: 30% !important;
+    display: flex;
+    border: 1px solid rgb(160, 160, 160);
+    flex-direction: row;
+    background: #efefef;
+    height: 20px;
+    border-radius: 5px;
+    row-gap: 4px;
+    align-items: center;
+    justify-content: center;
+}
+
+#ChatBoxTabSettings .content .lists .tab .remove {
+    padding-left: 3px;
+    padding-right: 3px;
+    background-color: rgb(213, 0, 0);
+    color: white;
+    padding: auto;
+    height: 100%;
+}
+
+#ChatBoxTabSettings .content .lists .tab .move {
+    padding-left: 3px;
+    color: white;
+    padding: auto;
+    padding-right: 3px;
+    background-color: rgb(0, 101, 183);
+    height: 100%;
+}
+
+#ChatBoxTabSettings .content .lists .tab .tab-name {
+    font-size: 10px;
+}
+
+#ChatBoxTabSettings .content .lists .tab .blinking-light {
+    width: 10px;
+    height: 10px;
+    border-radius: 100%;
+    background-color: red;
+    animation: blink 1s linear infinite;
+}
+
+
+
+/* animations */
+@keyframes blink {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
 }

@@ -344,7 +344,6 @@ define(function (require) {
 
 		// open tab setting component
 		this.ui.find('.header .opttab .mainopttab .tabsettingsopt').click(function () {
-			console.log('starting event')
 			ChatBox.toggleChatTabSettingsWindow()
 		});
 
@@ -429,12 +428,13 @@ define(function (require) {
 	}
 
 	ChatBox.toggleChatTabSettingsWindow = function toggleChatTabSettingsWindow() {
-		console.log('toggling window')
 		ChatBoxTabSettings.toggle();
 	}
 
 
 	ChatBox.removeTab = function removeTab() {
+		ChatBoxTabSettings.removeTab(this.activeTab);
+
 		this.ui.find('table.header tr td.tab[data-tab="' + this.activeTab + '"]').remove();
 		this.ui.find('.body .content[data-content="' + this.activeTab + '"]').remove();
 
@@ -513,6 +513,7 @@ define(function (require) {
 
 		this.ui.find('table.header tr td.tab[data-tab="' + tabID + '"] div input').on('change', function () {
 			ChatBox.tabs[tabID].name = this.value;
+			ChatBoxTabSettings.updateTabName(tabID, this.value)
 		});
 
 		this.ui.find('.body .contentwrapper').append(
@@ -527,8 +528,24 @@ define(function (require) {
 		this.tabCount++;
 
 		ChatBoxSettings.updateTab(this.activeTab, tabName);
+		ChatBoxTabSettings.addTab(this.tabs[tabID])
 
 		return tabID;
+	}
+
+	ChatBox.moveTabPosition = function moveTabPosition(tabID) {
+		var parentNode = this.ui.find('table.header tr')
+		var childNode = this.ui.find('table.header tr td.tab[data-tab="' + tabID + '"]')
+		if (childNode && this.tabs[tabID]) {
+			childNode.remove()
+			parentNode.prepend(`
+			<td class="tab" data-tab="${tabID}">
+				<div class="on">
+					<input type="text" value="${this.tabs[tabID].name}"/>
+				</div>
+			</td>
+			`)
+		}
 	}
 
 	ChatBox.switchTab = function switchTab(tabID) {
@@ -548,7 +565,7 @@ define(function (require) {
 
 		tabName = this.ui.find('.header tr td div.on input').val();
 
-		this.ui.find('.content')[tabID].scrollTop = this.ui.find('.content')[tabID].scrollHeight;
+		// this.ui.find('.content')[tabID].scrollTop = this.ui.find('.content')[tabID].scrollHeight;
 
 		ChatBoxSettings.updateTab(this.activeTab, tabName);
 	}
