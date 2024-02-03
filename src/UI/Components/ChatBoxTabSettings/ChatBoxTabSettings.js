@@ -110,7 +110,6 @@ define(function (require) {
     ChatBoxTabSettings.onKeyDown = function onKeyDown(event) { };
 
     ChatBoxTabSettings.addTab = function addTab(tab) {
-        console.log(tab)
         ChatBoxTabSettings.tabs[tab.id] = tab
 
         this.ui.find('#settings_list').append(`
@@ -128,16 +127,13 @@ define(function (require) {
         })
 
         this.ui.find(`#settings_list .tab[data-tab="${tab.id}"] .move`).on('click', function (event) {
-            console.log('clicked')
             ChatBoxTabSettings.updateCellPosition(tab.id)
             ChatBox.moveTabPosition(tab.id)
         })
     };
 
     ChatBoxTabSettings.removeTab = function removeTab(tabID) {
-        console.log('removing ', tabID)
         ChatBoxTabSettings.tabs[tabID]
-        console.log(ChatBoxTabSettings.tabs[tabID])
         delete ChatBoxTabSettings.tabs[tabID];
         this.ui.find('#settings_list .tab[data-tab="' + tabID + '"]').remove()
     }

@@ -196,6 +196,21 @@ define(function (require) {
 			].join('\n'));
 		});
 
+		// set filter type in button
+		if (ChatBox.sendTo > 0) {
+			switch (ChatBox.sendTo) {
+				case 16:
+					ChatBox.ui.find('.input.large .btn.filter button').text('Guild')
+					break;
+				case 8:
+					ChatBox.ui.find('.input.large .btn.filter button').text('Party')
+					break;
+				default:
+					ChatBox.ui.find('.input.large .btn.filter button').text('Public')
+					break;
+			}
+		}
+
 		// Input selection
 		this.ui.find('.input input').mousedown(function (event) {
 			this.select();
@@ -220,6 +235,14 @@ define(function (require) {
 				}
 			}.bind(this), 1);
 		}.bind(this));
+
+		// open chatbox on clicking small chatbox message box
+		this.ui.find('.input.small input').click((event) => {
+			this.ui.find('.input.small').css('display', 'none')
+			this.ui.find('.input.large').css('display', 'flex')
+		})
+
+
 
 		// watch for big chatbox send button
 		this.ui.find('.input.large .btn.send').click((event) => {
@@ -320,11 +343,26 @@ define(function (require) {
 			}
 		});
 
+		// enter tab event
 		this.ui.on('click', 'table.header tr td.tab', function (event) {
 			event.stopImmediatePropagation();
 			var currentElem = event.currentTarget;
 			if (ChatBox.activeTab !== currentElem.dataset.tab - 1) {
 				ChatBox.switchTab(currentElem.dataset.tab);
+			}
+			ChatBox.ui.find('.input.small').css('display', 'none')
+			ChatBox.ui.find('.input.large').css('display', 'flex')
+		});
+
+		// also watch for dblclick on main tab
+		this.ui.on('dblclick', 'table.header tr td.tab', function (event) {
+			var currentElem = event.currentTarget;
+			if (currentElem) {
+				var input = ChatBox.ui.find('table.header tr td.tab[data-tab="' + currentElem.dataset.tab + '"] div input')
+				if (input) {
+					input.removeAttr('disabled')
+					input.focus()
+				}
 			}
 		});
 
@@ -506,10 +544,23 @@ define(function (require) {
 		this.ui.find('table.header tr .opttab').before(`
 			<td class="tab" data-tab="${tabID}">
 				<div class="on">
-					<input type="text" value="${tabName}"/>
+					<input disabled="true" type="text" value="${tabName}"/>
 				</div>
 			</td>
 		`);
+
+		this.ui.find('table.header tr td.tab[data-tab="' + tabID + '"] div input').on('dblclick', function () {
+			var input = ChatBox.ui.find('table.header tr td.tab[data-tab="' + tabID + '"] div input')
+			if (input) {
+				input.removeAttr('disabled')
+				input.focus()
+			}
+		});
+
+		this.ui.find('table.header tr td.tab[data-tab="' + tabID + '"] div input').on('blur', function () {
+			var input = ChatBox.ui.find('table.header tr td.tab[data-tab="' + tabID + '"] div input')
+			input.attr('disabled', true)
+		});
 
 		this.ui.find('table.header tr td.tab[data-tab="' + tabID + '"] div input').on('change', function () {
 			ChatBox.tabs[tabID].name = this.value;
@@ -541,7 +592,7 @@ define(function (require) {
 			parentNode.prepend(`
 			<td class="tab" data-tab="${tabID}">
 				<div class="on">
-					<input type="text" value="${this.tabs[tabID].name}"/>
+					<input disabled type="text" value="${this.tabs[tabID].name}"/>
 				</div>
 			</td>
 			`)
@@ -1111,6 +1162,18 @@ define(function (require) {
 			}
 
 			ChatBox.sendTo = type;
+
+			switch (ChatBox.sendTo) {
+				case 16:
+					ChatBox.ui.find('.input.large .btn.filter button').text('Guild')
+					break;
+				case 8:
+					ChatBox.ui.find('.input.large .btn.filter button').text('Party')
+					break;
+				default:
+					ChatBox.ui.find('.input.large .btn.filter button').text('Public')
+					break;
+			}
 		};
 	}
 
