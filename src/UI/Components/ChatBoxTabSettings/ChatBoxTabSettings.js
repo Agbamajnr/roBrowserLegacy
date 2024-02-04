@@ -109,6 +109,14 @@ define(function (require) {
      */
     ChatBoxTabSettings.onKeyDown = function onKeyDown(event) { };
 
+    ChatBoxTabSettings.updateAlerter = function updateAlerter(tab, state) {
+        if (state === true) {
+            this.ui.find(`#settings_list .tab[data-tab="${tab}"] .blinking-light`).css('display', 'block')
+        } else {
+            this.ui.find(`#settings_list .tab[data-tab="${tab}"] .blinking-light`).css('display', 'none')
+        }
+    }
+
     ChatBoxTabSettings.addTab = function addTab(tab) {
         ChatBoxTabSettings.tabs[tab.id] = tab
 

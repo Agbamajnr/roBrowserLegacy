@@ -352,6 +352,9 @@ define(function (require) {
 			}
 			ChatBox.ui.find('.input.small').css('display', 'none')
 			ChatBox.ui.find('.input.large').css('display', 'flex')
+
+			ChatBoxTabSettings.updateAlerter(currentElem.dataset.tab, false)
+			ChatBox.ui.find('table.header tr td.tab[data-tab="' + currentElem.dataset.tab + '"] div input').removeClass('blink')
 		});
 
 		// also watch for dblclick on main tab
@@ -544,7 +547,7 @@ define(function (require) {
 		this.ui.find('table.header tr .opttab').before(`
 			<td class="tab" data-tab="${tabID}">
 				<div class="on">
-					<input disabled="true" type="text" value="${tabName}"/>
+					<input disabled="true" id="tab-input" type="text" value="${tabName}"/>
 				</div>
 			</td>
 		`);
@@ -555,6 +558,15 @@ define(function (require) {
 				input.removeAttr('disabled')
 				input.focus()
 			}
+		});
+		this.ui.find('table.header tr td.tab[data-tab="' + tabID + '"] div input').on('click', function () {
+			ChatBox.switchTab(tabID);
+
+			ChatBox.ui.find('.input.small').css('display', 'none')
+			ChatBox.ui.find('.input.large').css('display', 'flex')
+
+			ChatBoxTabSettings.updateAlerter(tabID, false)
+			ChatBox.ui.find('table.header tr td.tab[data-tab="' + tabID + '"] div input').removeClass('blink')
 		});
 
 		this.ui.find('table.header tr td.tab[data-tab="' + tabID + '"] div input').on('blur', function () {
@@ -592,7 +604,7 @@ define(function (require) {
 			parentNode.prepend(`
 			<td class="tab" data-tab="${tabID}">
 				<div class="on">
-					<input disabled type="text" value="${this.tabs[tabID].name}"/>
+					<input disabled="true" type="text" id="tab-input" value="${this.tabs[tabID].name}"/>
 				</div>
 			</td>
 			`)
@@ -616,7 +628,7 @@ define(function (require) {
 
 		tabName = this.ui.find('.header tr td div.on input').val();
 
-		// this.ui.find('.content')[tabID].scrollTop = this.ui.find('.content')[tabID].scrollHeight;
+		this.ui.find('.content[data-content="' + tabID + '"]').scrollTop = this.ui.find('.content[data-content="' + tabID + '"]').scrollHeight;
 
 		ChatBoxSettings.updateTab(this.activeTab, tabName);
 	}
@@ -998,6 +1010,8 @@ define(function (require) {
 				}
 
 				element.remove();
+
+
 			}
 
 
@@ -1024,7 +1038,15 @@ define(function (require) {
 			if (shouldScrollDown(content[0], lastMessageHeight, content.height())) {
 				content[0].scrollTop = content[0].scrollHeight;
 			}
+
+
+			if (text.length > 0 && TabNum !== ChatBox.activeTab) {
+				ChatBoxTabSettings.updateAlerter(TabNum, true)
+				ChatBox.ui.find('table.header tr td.tab[data-tab="' + TabNum + '"] div input').addClass('blink')
+
+			}
 		});
+
 	};
 
 
