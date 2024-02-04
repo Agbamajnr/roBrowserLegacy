@@ -81,6 +81,7 @@
     color: white;
     padding: auto;
     height: 100%;
+    cursor: pointer;
 }
 
 #ChatBoxTabSettings .content .lists .tab .move {
@@ -90,6 +91,7 @@
     padding-right: 3px;
     background-color: rgb(0, 101, 183);
     height: 100%;
+    cursor: pointer;
 }
 
 #ChatBoxTabSettings .content .lists .tab .tab-name {

@@ -19,6 +19,7 @@
 	width: 75px;
 	color: white;
 	text-align: center;
+	cursor: pointer;
 }
 
 #chatbox .header input {
@@ -27,6 +28,7 @@
 	color: white;
 	width: 75px;
 	height: 15px;
+	cursor: pointer;
 	text-align: center;
 }
 

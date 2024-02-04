@@ -90,6 +90,18 @@ define(function (require) {
                 </div>
                 `);
 
+                this.ui.find(`#settings_list .tab[data-tab="${tab.id}"] .tab-name`).on('click', function (event) {
+                    ChatBox.switchTab(tab.id)
+                    ChatBoxTabSettings.updateAlerter(tab.id, false)
+                    ChatBox.ui.find('table.header tr td.tab[data-tab="' + tab.id + '"] div input').removeClass('blink')
+                })
+
+                this.ui.find(`#settings_list .tab[data-tab="${tab.id}"] .blinking-light`).on('click', function (event) {
+                    ChatBox.switchTab(tab.id)
+                    ChatBoxTabSettings.updateAlerter(tab.id, false)
+                    ChatBox.ui.find('table.header tr td.tab[data-tab="' + tab.id + '"] div input').removeClass('blink')
+                })
+
                 this.ui.find(`#settings_list .tab[data-tab="${tab.id}"] .remove`).on('click', function (event) {
                     ChatBox.switchTab(tab.id)
                     ChatBox.removeTab()
@@ -128,6 +140,18 @@ define(function (require) {
                 <div class="move">↑</div>
             </div>
         `);
+
+        this.ui.find(`#settings_list .tab[data-tab="${tab.id}"] .tab-name`).on('click', function (event) {
+            ChatBox.switchTab(tab.id)
+            ChatBoxTabSettings.updateAlerter(tab.id, false)
+            ChatBox.ui.find('table.header tr td.tab[data-tab="' + tab.id + '"] div input').removeClass('blink')
+        })
+
+        this.ui.find(`#settings_list .tab[data-tab="${tab.id}"] .blinking-light`).on('click', function (event) {
+            ChatBox.switchTab(tab.id)
+            ChatBoxTabSettings.updateAlerter(tab.id, false)
+            ChatBox.ui.find('table.header tr td.tab[data-tab="' + tab.id + '"] div input').removeClass('blink')
+        })
 
         this.ui.find(`#settings_list .tab[data-tab="${tab.id}"] .remove`).on('click', function (event) {
             ChatBox.switchTab(tab.id)

@@ -363,7 +363,7 @@ define(function (require) {
 			if (currentElem) {
 				var input = ChatBox.ui.find('table.header tr td.tab[data-tab="' + currentElem.dataset.tab + '"] div input')
 				if (input) {
-					input.removeAttr('disabled')
+					input.removeAttr('readonly')
 					input.focus()
 				}
 			}
@@ -547,7 +547,7 @@ define(function (require) {
 		this.ui.find('table.header tr .opttab').before(`
 			<td class="tab" data-tab="${tabID}">
 				<div class="on">
-					<input disabled="true" id="tab-input" type="text" value="${tabName}"/>
+					<input readonly="true" id="tab-input" type="text" value="${tabName}"/>
 				</div>
 			</td>
 		`);
@@ -555,7 +555,7 @@ define(function (require) {
 		this.ui.find('table.header tr td.tab[data-tab="' + tabID + '"] div input').on('dblclick', function () {
 			var input = ChatBox.ui.find('table.header tr td.tab[data-tab="' + tabID + '"] div input')
 			if (input) {
-				input.removeAttr('disabled')
+				input.removeAttr('readonly')
 				input.focus()
 			}
 		});
@@ -571,7 +571,7 @@ define(function (require) {
 
 		this.ui.find('table.header tr td.tab[data-tab="' + tabID + '"] div input').on('blur', function () {
 			var input = ChatBox.ui.find('table.header tr td.tab[data-tab="' + tabID + '"] div input')
-			input.attr('disabled', true)
+			input.attr('readonly', true)
 		});
 
 		this.ui.find('table.header tr td.tab[data-tab="' + tabID + '"] div input').on('change', function () {
@@ -604,7 +604,7 @@ define(function (require) {
 			parentNode.prepend(`
 			<td class="tab" data-tab="${tabID}">
 				<div class="on">
-					<input disabled="true" type="text" id="tab-input" value="${this.tabs[tabID].name}"/>
+					<input readonly="true" type="text" id="tab-input" value="${this.tabs[tabID].name}"/>
 				</div>
 			</td>
 			`)
@@ -1039,8 +1039,7 @@ define(function (require) {
 				content[0].scrollTop = content[0].scrollHeight;
 			}
 
-
-			if (text.length > 0 && TabNum !== ChatBox.activeTab) {
+			if (text.length > 0 && TabNum.toString() !== ChatBox.activeTab.toString() && TabNum.toString() !== _preferences.activeTab.toString()) {
 				ChatBoxTabSettings.updateAlerter(TabNum, true)
 				ChatBox.ui.find('table.header tr td.tab[data-tab="' + TabNum + '"] div input').addClass('blink')
 
