@@ -72,8 +72,35 @@
 	justify-content: space-between;
 }
 
-/** Content **/
-#chatbox .body {
+
+/* large chatbox header */
+#chatbox .large-header {
+	width: 585px;
+	margin-left: 3px;
+	padding-left: 5px;
+	padding-right: 5px;
+	height: 45px;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	background: #43525E;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
+	/* max-width: 100% */
+}
+
+#chatbox .large-header .activeTabName {
+	color: green;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	font-size: 12px;
+	text-transform: uppercase;
+	font-weight: bold;
+}
+
+/** Small  Content **/
+#chatbox .body.small {
 	background: rgba(0, 0, 0, 0.5);
 	border-left: 1px solid white;
 	border-right: 1px solid white;
@@ -84,11 +111,11 @@
 	max-width: 100%;
 }
 
-#chatbox .contentwrapper {
+#chatbox .body.small .contentwrapper {
 	height: 42px;
 }
 
-#chatbox .content {
+#chatbox .body.small .content {
 	font-size: 12px;
 	text-shadow: 1px 1px 0px black;
 	height: 100%;
@@ -97,14 +124,154 @@
 	display: none;
 }
 
-#chatbox .content.active {
+#chatbox .body.small .content.active {
 	display: block;
 }
 
-#chatbox .content a {
+#chatbox .body.small .content a {
 	color: inherit;
 	text-decoration: underline;
 }
+
+
+
+/* Large chatbpox content */
+#chatbox .body.large {
+	background: rgba(0, 0, 0, 0.5);
+	border-left: 1px solid #43525E;
+	border-right: 1px solid #43525E;
+	border-radius: 0px 3px 0px 0px;
+	padding-left: 5px;
+	margin-left: 3px;
+	min-height: 100px;
+	margin-right: -2px;
+	display: flex;
+	row-gap: 10px !important;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	max-width: 100%;
+}
+
+#chatbox .body.large .contentwrapper {
+	height: 100px !important;
+	min-height: 100% !important;
+	width: 80%;
+}
+
+#chatbox .body.large .contentwrapper::-webkit-scrollbar {
+	display: none;
+}
+
+
+#chatbox .body.large .tabs {
+	width: 20%;
+	overflow: hidden;
+	background: rgba(67, 82, 94, 0.7);
+	border-left: 1px solid gray;
+	border-right: 1px solid gray;
+	display: flex;
+	flex-direction: column !important;
+	align-items: center;
+	height: 100% !important;
+	min-height: 100px !important;
+}
+
+#chatbox .body.large .tabs .main-tabs {
+	overflow-y: scroll;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100% !important;
+	flex-wrap: nowrap;
+	height: 85%;
+	flex-shrink: 0;
+	padding: 5px !important;
+
+}
+
+#chatbox .body.large .tabs .main-tabs::-webkit-scrollbar {
+	display: none !important;
+}
+
+
+#chatbox .body.large .tabs .bottom-tabs {
+	padding: 5px !important;
+	margin-top: 2px;
+	width: 100% !important;
+	display: flex;
+	height: 50%;
+	flex-direction: column !important;
+	align-items: center;
+	border-top: 1px solid white;
+}
+
+
+
+#chatbox .body.large .tabs .bottom-tabs .settings-tab {
+	padding-top: 2px;
+	text-align: center;
+	background: #43525E;
+	border: 1px solid #959595;
+	font-size: 10px;
+	color: white;
+	width: 90%;
+	height: 16px;
+}
+
+#chatbox .body.large .tabs .main-tabs .tab {
+	border-radius: 2px 2px 0px 0px;
+	transition: all .2s linear;
+	background: #43525E;
+	border: 1px solid #959595;
+	font-size: 10px;
+	margin-top: 3px;
+	color: white;
+	width: 90%;
+	text-align: center;
+}
+
+
+
+#chatbox .body.large .tabs .main-tabs .tab div.on {
+	background: #43525E;
+	border: 1.5px solid white;
+	height: 20px;
+}
+
+#chatbox .body.large .tabs .main-tabs .tab div {
+	background: transparent !important;
+	outline: none;
+	height: 16px;
+	width: 100%;
+}
+
+#chatbox .body.large .tabs .main-tabs .tab div input {
+	outline: none;
+	width: 100%;
+	height: 100%;
+	text-align: center;
+	font-size: 10px;
+	color: white;
+	border: none;
+	background-color: transparent;
+}
+
+
+#chatbox .body.large .content {
+	font-size: 12px;
+	text-shadow: 1px 1px 0px black;
+	height: 100%;
+	overflow-y: auto;
+	line-height: 14px;
+	display: none;
+}
+
+#chatbox .body.large .content.active {
+	display: block;
+}
+
+
 
 #chatbox .draggable {
 	height: 10px;
@@ -201,10 +368,13 @@
 #chatbox .input.large {
 	width: 600px;
 	height: 60px;
+	margin-left: 3px;
 	background: #43525E;
 	display: flex;
 	flex-direction: row;
 	align-items: center;
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
 	justify-content: center;
 	max-width: 100%;
 }
@@ -217,7 +387,6 @@
 	align-items: center;
 	height: 30px;
 	max-height: 30px !important;
-	border-radius: 2px;
 	box-shadow: 0px 1px 3px #333;
 }
 
@@ -231,7 +400,7 @@
 
 #chatbox .input.large .btn {
 	max-width: 63px;
-	border-radius: 2px;
+	border-radius: 4px;
 	height: 34px;
 	min-width: 50px;
 	margin: 5px;
@@ -280,49 +449,99 @@ input:-webkit-autofill:active {
 	height: 100%;
 }
 
-#chatbox .chat-function {
+
+/* small chatbox chat function */
+#chatbox .chat-function.small {
 	position: absolute;
 	right: 0px;
 	top: 0px;
 }
 
-#chatbox .chat-function button {
+#chatbox .chat-function.small button {
 	background-size: auto;
 	border: 0;
 	background-repeat: no-repeat;
 	background-color: transparent;
 }
 
-#chatbox .chat-function .chatmode {
+#chatbox .chat-function.small .chatmode {
 	width: 15px;
 	height: 9px;
 }
 
-#chatbox .chat-function .battleopt {
+#chatbox .chat-function.small .battleopt {
 	width: 10px;
 	height: 10px;
 	background-size: cover;
 }
 
-#chatbox .chat-function .stickfucn {
+#chatbox .chat-function.small .stickfucn {
 	width: 14px;
 	height: 10px;
 	background-size: cover;
 }
 
-#chatbox .chat-function .battleopt2 {
+#chatbox .chat-function.small .battleopt2 {
 	width: 9px;
 	height: 9px;
 	background-size: cover;
 }
 
-#chatbox .chat-function .wndminib {
+#chatbox .chat-function.small .wndminib {
 	width: 9px;
 	height: 9px;
 	background-size: cover;
 }
 
-#chatbox .chat-function .lockdragwnd {
+#chatbox .chat-function.small .lockdragwnd {
+	width: 15px;
+	height: 10px;
+}
+
+
+
+/* large chatbox chat function */
+#chatbox .chat-function.large {
+	width: fit-content;
+}
+
+#chatbox .chat-function.large button {
+	background-size: auto;
+	border: 0;
+	background-repeat: no-repeat;
+	background-color: transparent;
+}
+
+#chatbox .chat-function.large .chatmode {
+	width: 15px;
+	height: 9px;
+}
+
+#chatbox .chat-function.large .battleopt {
+	width: 10px;
+	height: 10px;
+	background-size: cover;
+}
+
+#chatbox .chat-function.large .stickfucn {
+	width: 14px;
+	height: 10px;
+	background-size: cover;
+}
+
+#chatbox .chat-function.large .battleopt2 {
+	width: 9px;
+	height: 9px;
+	background-size: cover;
+}
+
+#chatbox .chat-function.large .wndminib {
+	width: 9px;
+	height: 9px;
+	background-size: cover;
+}
+
+#chatbox .chat-function.large .lockdragwnd {
 	width: 15px;
 	height: 10px;
 }

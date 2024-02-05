@@ -173,11 +173,16 @@ define(function (require) {
 		this.magnet.LEFT = _preferences.magnet_left;
 		this.magnet.RIGHT = _preferences.magnet_right;
 
-		this.draggable(this.ui.find('.input'));
+		this.draggable(this.ui.find('.body.small'));
+		this.draggable(this.ui.find('.body.large'));
+		this.draggable(this.ui.find('.input.small'));
+		this.draggable(this.ui.find('.input.large'));
+		this.draggable(this.ui.find('.large-header'));
 		this.draggable(this.ui.find('.battlemode'));
 
 		// Sorry for this un-documented code (see UIComponent for more informations)
-		this.__mouseStopBlock = this.ui.find('.input');
+		this.__mouseStopBlock = this.ui.find('.input.small');
+		this.__mouseStopBlock = this.ui.find('.input.large');
 
 		// Setting chatbox scrollbar
 		Client.loadFiles([DB.INTERFACE_PATH + 'basic_interface/dialscr_down.bmp', DB.INTERFACE_PATH + 'basic_interface/dialscr_up.bmp'], function (down, up) {
@@ -212,7 +217,12 @@ define(function (require) {
 		}
 
 		// Input selection
-		this.ui.find('.input input').mousedown(function (event) {
+		this.ui.find('.input.small input').mousedown(function (event) {
+			this.select();
+			event.stopImmediatePropagation();
+			return false;
+		});
+		this.ui.find('.input.large input').mousedown(function (event) {
 			this.select();
 			event.stopImmediatePropagation();
 			return false;
@@ -226,9 +236,25 @@ define(function (require) {
 			}.bind(this), 1);
 		}.bind(this));
 
-		this.ui.find('.input .message')[0].maxLength = MAX_LENGTH;
+		this.ui.find('.input.small .message').blur(function () {
+			Events.setTimeout(function () {
+				if (!document.activeElement.tagName.match(/input|select|textarea/i)) {
+					this.ui.find('.input.large .message').focus();
+				}
+			}.bind(this), 1);
+		}.bind(this));
 
-		this.ui.find('.input .username').blur(function () {
+		this.ui.find('.input.small .message')[0].maxLength = MAX_LENGTH;
+		this.ui.find('.input.large .message')[0].maxLength = MAX_LENGTH;
+
+		this.ui.find('.input.small .username').blur(function () {
+			Events.setTimeout(function () {
+				if (!document.activeElement.tagName.match(/input|select|textarea/i)) {
+					this.ui.find('.input .username').focus();
+				}
+			}.bind(this), 1);
+		}.bind(this));
+		this.ui.find('.input.large .username').blur(function () {
 			Events.setTimeout(function () {
 				if (!document.activeElement.tagName.match(/input|select|textarea/i)) {
 					this.ui.find('.input .username').focus();
@@ -236,10 +262,9 @@ define(function (require) {
 			}.bind(this), 1);
 		}.bind(this));
 
-		// open chatbox on clicking small chatbox message box
+		// open large chatbox on clicking small chatbox message box
 		this.ui.find('.input.small input').click((event) => {
-			this.ui.find('.input.small').css('display', 'none')
-			this.ui.find('.input.large').css('display', 'flex')
+			ChatBox.toggleLargeChatBox(true)
 		})
 
 
@@ -301,7 +326,26 @@ define(function (require) {
 		});
 
 		// Send message to...
-		this.ui.find('.input .filter').click(function () {
+		this.ui.find('.input.small .filter').click(function () {
+			var pos = jQuery(this).offset();
+			var ui = ContextMenu.ui.find('.menu');
+
+			ContextMenu.remove();
+			ContextMenu.append();
+
+			ContextMenu.addElement(DB.getMessage(85), onChangeTargetMessage(ChatBox.TYPE.PUBLIC));
+			ContextMenu.addElement(DB.getMessage(86), onChangeTargetMessage(ChatBox.TYPE.PARTY));
+			ContextMenu.addElement(DB.getMessage(437), onChangeTargetMessage(ChatBox.TYPE.GUILD));
+
+			ui.css({
+				top: pos.top - ui.height() - 5,
+				left: pos.left - ui.width() + 25
+			});
+		}).mousedown(function (event) {
+			event.stopImmediatePropagation();
+			return false;
+		});
+		this.ui.find('.input.large .filter').click(function () {
 			var pos = jQuery(this).offset();
 			var ui = ContextMenu.ui.find('.menu');
 
@@ -322,7 +366,12 @@ define(function (require) {
 		});
 
 		// Change size
-		this.ui.find('.input .size').click(function (event) {
+		this.ui.find('.input.small .size').click(function (event) {
+			ChatBox.updateHeight(true);
+			event.stopImmediatePropagation();
+			return false;
+		});
+		this.ui.find('.input.large .size').click(function (event) {
 			ChatBox.updateHeight(true);
 			event.stopImmediatePropagation();
 			return false;
@@ -332,7 +381,8 @@ define(function (require) {
 		this.ui.find('.content').on('mousewheel DOMMouseScroll', onScroll);
 
 		this.ui.find('.battlemode .bmtoggle').click(function (event) {
-			ChatBox.ui.find('.input').toggle();
+			ChatBox.ui.find('.input.small').toggle();
+			ChatBox.ui.find('.input.large').toggle();
 			ChatBox.ui.find('.battlemode').toggle();
 		});
 
@@ -350,8 +400,7 @@ define(function (require) {
 			if (ChatBox.activeTab !== currentElem.dataset.tab - 1) {
 				ChatBox.switchTab(currentElem.dataset.tab);
 			}
-			ChatBox.ui.find('.input.small').css('display', 'none')
-			ChatBox.ui.find('.input.large').css('display', 'flex')
+			ChatBox.toggleLargeChatBox(true)
 
 			ChatBoxTabSettings.updateAlerter(currentElem.dataset.tab, false)
 			ChatBox.ui.find('table.header tr td.tab[data-tab="' + currentElem.dataset.tab + '"] div input').removeClass('blink')
@@ -385,6 +434,9 @@ define(function (require) {
 
 		// open tab setting component
 		this.ui.find('.header .opttab .mainopttab .tabsettingsopt').click(function () {
+			ChatBox.toggleChatTabSettingsWindow()
+		});
+		this.ui.find('.body.large .tabs .bottom-tabs .settings-tab').click(function () {
 			ChatBox.toggleChatTabSettingsWindow()
 		});
 
@@ -439,6 +491,47 @@ define(function (require) {
 		makeResizableDiv()
 	};
 
+	ChatBox.toggleLargeChatBox = function toggleLargeChatBox(state) {
+		if (state === true) {
+			// manage body
+			this.ui.find('.body.large').show()
+			this.ui.find('.body.small').hide()
+
+
+			// manage input field
+			this.ui.find('.input.small').hide()
+			this.ui.find('.input.large').show()
+
+			// manage header
+			this.ui.find('table.header').hide()
+			this.ui.find('.large-header').show()
+
+
+			// manage chat function
+			this.ui.find('.chat-function.small').hide()
+			this.ui.find('.chat-function.large').show()
+
+		} else {
+			// manage input
+			this.ui.find('.input.small').show()
+			this.ui.find('.input.large').hide()
+
+			// manage header
+			this.ui.find('table.header').show()
+			this.ui.find('.large-header').hide()
+
+
+			// manage body 
+			this.ui.find('.body.small').show()
+			this.ui.find('.body.large').hide()
+
+			// manage chat function
+			this.ui.find('.chat-function.small').show()
+			this.ui.find('.chat-function.large').hide()
+
+		}
+	}
+
 
 	/**
 	 * Clean up the box
@@ -457,15 +550,23 @@ define(function (require) {
 		this.ui.find('.content').empty();
 		this.ui.find('.input .message').val('');
 		this.ui.find('.input .username').val('');
+		this.ui.find('.input.large .message').val('');
+		this.ui.find('.input.large .username').val('');
 
 		_historyMessage.clear();
 		_historyNickName.clear();
 	};
 
 	ChatBox.toggleChatBattleOption = function toggleChatBattleOption() {
-		var tabName = this.ui.find('.header tr td div.on input').val();
-		ChatBoxSettings.toggle();
-		ChatBoxSettings.updateTab(this.activeTab, tabName);
+		if (this.ui.find('.body.large .tabs .main-tabs div.on input').css('display') !== 'none') {
+			var tabName = this.ui.find('.body.large .tabs .main-tabs div.tab div.on input').val();
+			ChatBoxSettings.toggle();
+			ChatBoxSettings.updateTab(this.activeTab, tabName);
+		} else {
+			var tabName = this.ui.find('.header tr td div.on input').val();
+			ChatBoxSettings.toggle();
+			ChatBoxSettings.updateTab(this.activeTab, tabName);
+		}
 	}
 
 	ChatBox.toggleChatTabSettingsWindow = function toggleChatTabSettingsWindow() {
@@ -477,11 +578,16 @@ define(function (require) {
 		ChatBoxTabSettings.removeTab(this.activeTab);
 
 		this.ui.find('table.header tr td.tab[data-tab="' + this.activeTab + '"]').remove();
-		this.ui.find('.body .content[data-content="' + this.activeTab + '"]').remove();
+		this.ui.find('.body.large .tabs .main-tabs div.tab[data-tab="' + this.activeTab + '"]').remove();
+		this.ui.find('.body.small .content[data-content="' + this.activeTab + '"]').remove();
+		this.ui.find('.body.large .content[data-content="' + this.activeTab + '"]').remove();
 
 		var tabName = '';
+		var tabName2 = '';
 		var _elem = this.ui.find('table.header tr td.tab');
 		_elem = this.ui.find('table.header tr td.tab')[_elem.length - 1];
+		var _elem2 = this.ui.find('.body.large .tabs .main-tabs div.tab');
+		_elem2 = this.ui.find('.body.large .tabs .main-tabs div.tab')[_elem.length - 1];
 
 		// Use delete instead of splice to avoid ID messup and make our life eastier.
 		delete ChatBoxSettings.tabOption[this.activeTab];
@@ -489,9 +595,17 @@ define(function (require) {
 		this.tabCount--;
 
 		ChatBox.switchTab(_elem.dataset.tab);
+		ChatBox.switchTab(_elem2.dataset.tab);
 
 		tabName = this.ui.find('.header tr td div.on input').val();
-		ChatBoxSettings.updateTab(this.activeTab, tabName);
+		tabName2 = this.ui.find('.body.large .tabs .main-tabs div.tab div.on input').val();
+
+		if (this.ui.find('.body.large').css('display') !== 'none') {
+			ChatBoxSettings.updateTab(this.activeTab, tabName2);
+		} else {
+			ChatBoxSettings.updateTab(this.activeTab, tabName);
+		}
+
 	}
 
 	ChatBox.addNewTab = function addNewTab(name, settings) {
@@ -535,12 +649,16 @@ define(function (require) {
 		tab.name = tabName;
 
 		// Store prev height
-		//var height = this.ui.find('.contentwrapper').height();
+		// var height = this.ui.find('.contentwrapper').height();
 
 		// Remove current active state
 		this.ui.find('table.header tr td.tab div')
 			.removeClass('on');
-		this.ui.find('.body .content')
+		this.ui.find('.body.large .tabs .main-tabs .tab div')
+			.removeClass('on');
+		this.ui.find('.body.small .content')
+			.removeClass('active');
+		this.ui.find('.body.large .content')
 			.removeClass('active');
 
 		// Add new elements as active
@@ -552,6 +670,14 @@ define(function (require) {
 			</td>
 		`);
 
+		this.ui.find('.body.large .tabs .main-tabs').append(`
+			<div class="tab" data-tab="${tabID}">
+				<div class="on">
+					<input readonly="true" id="tab-input" type="text" value="${tabName}"/>
+				</div>
+			</div>
+		`);
+
 		this.ui.find('table.header tr td.tab[data-tab="' + tabID + '"] div input').on('dblclick', function () {
 			var input = ChatBox.ui.find('table.header tr td.tab[data-tab="' + tabID + '"] div input')
 			if (input) {
@@ -559,27 +685,60 @@ define(function (require) {
 				input.focus()
 			}
 		});
+		this.ui.find('.body.large .tabs .main-tabs div.tab[data-tab="' + tabID + '"] div input').on('dblclick', function () {
+			var input = ChatBox.ui.find('.body.large .tabs .main-tabs div.tab[data-tab="' + tabID + '"] div input')
+			if (input) {
+				input.removeAttr('readonly')
+				input.focus()
+			}
+		});
+
+
+
 		this.ui.find('table.header tr td.tab[data-tab="' + tabID + '"] div input').on('click', function () {
 			ChatBox.switchTab(tabID);
 
-			ChatBox.ui.find('.input.small').css('display', 'none')
-			ChatBox.ui.find('.input.large').css('display', 'flex')
+			ChatBox.toggleLargeChatBox(true)
 
 			ChatBoxTabSettings.updateAlerter(tabID, false)
 			ChatBox.ui.find('table.header tr td.tab[data-tab="' + tabID + '"] div input').removeClass('blink')
 		});
+		this.ui.find('.body.large .tabs .main-tabs div.tab[data-tab="' + tabID + '"] div input').on('click', function () {
+			ChatBox.switchTab(tabID);
+
+			ChatBox.toggleLargeChatBox(true)
+
+			ChatBoxTabSettings.updateAlerter(tabID, false)
+			ChatBox.ui.find('.body.large .tabs .main-tabs div.tab[data-tab="' + tabID + '"] div input').removeClass('blink')
+		});
+
+
 
 		this.ui.find('table.header tr td.tab[data-tab="' + tabID + '"] div input').on('blur', function () {
 			var input = ChatBox.ui.find('table.header tr td.tab[data-tab="' + tabID + '"] div input')
 			input.attr('readonly', true)
 		});
+		this.ui.find('.body.large .tabs .main-tabs div.tab[data-tab="' + tabID + '"] div input').on('blur', function () {
+			var input = ChatBox.ui.find('.body.large .tabs .main-tabs div.tab[data-tab="' + tabID + '"] div input')
+			input.attr('readonly', true)
+		});
+
 
 		this.ui.find('table.header tr td.tab[data-tab="' + tabID + '"] div input').on('change', function () {
 			ChatBox.tabs[tabID].name = this.value;
+			ChatBox.ui.find('.large-header .activeTabName').text(this.value)
+			ChatBoxTabSettings.updateTabName(tabID, this.value)
+		});
+		this.ui.find('.body.large .tabs .main-tabs div.tab[data-tab="' + tabID + '"] div input').on('change', function () {
+			ChatBox.tabs[tabID].name = this.value;
+			ChatBox.ui.find('.large-header .activeTabName').text(this.value)
 			ChatBoxTabSettings.updateTabName(tabID, this.value)
 		});
 
-		this.ui.find('.body .contentwrapper').append(
+		this.ui.find('.body.small .contentwrapper').append(
+			`<div class="content active" data-content="${tabID}"></div>`
+		);
+		this.ui.find('.body.large .contentwrapper').append(
 			`<div class="content active" data-content="${tabID}"></div>`
 		);
 
@@ -598,9 +757,14 @@ define(function (require) {
 
 	ChatBox.moveTabPosition = function moveTabPosition(tabID) {
 		var parentNode = this.ui.find('table.header tr')
+		var parentNode2 = this.ui.find('.body.large .tabs .main-tabs')
+
 		var childNode = this.ui.find('table.header tr td.tab[data-tab="' + tabID + '"]')
-		if (childNode && this.tabs[tabID]) {
+		var childNode2 = this.ui.find('.body.large .tabs .main-tabs div.tab[data-tab="' + tabID + '"]')
+
+		if ((childNode && this.tabs[tabID]) || (childNode2 && this.tabs[tabID])) {
 			childNode.remove()
+			childNode2.remove()
 			parentNode.prepend(`
 			<td class="tab" data-tab="${tabID}">
 				<div class="on">
@@ -608,29 +772,51 @@ define(function (require) {
 				</div>
 			</td>
 			`)
+			parentNode2.prepend(`
+			<div class="tab" data-tab="${tabID}">
+				<div class="on">
+					<input readonly="true" type="text" id="tab-input" value="${this.tabs[tabID].name}"/>
+				</div>
+			</div>
+			`)
 		}
 	}
 
 	ChatBox.switchTab = function switchTab(tabID) {
 		var tabName = '';
+		var tabName2 = '';
 
 		this.ui.find('table.header tr td.tab div')
 			.removeClass('on');
-		this.ui.find('.body .content')
+		this.ui.find('.body.large .tabs .main-tabs div.tab div')
+			.removeClass('on');
+		this.ui.find('.body.small .content')
+			.removeClass('active');
+		this.ui.find('.body.large .content')
 			.removeClass('active');
 
 		this.activeTab = tabID;
 
 		this.ui.find('table.header tr td.tab[data-tab="' + this.activeTab + '"] div')
 			.addClass('on');
-		this.ui.find('.body .content[data-content="' + this.activeTab + '"]')
+		this.ui.find('.body.large .tabs .main-tabs div.tab[data-tab="' + this.activeTab + '"] div')
+			.addClass('on');
+		this.ui.find('.body.small .content[data-content="' + this.activeTab + '"]')
+			.addClass('active');
+		this.ui.find('.body.large .content[data-content="' + this.activeTab + '"]')
 			.addClass('active');
 
 		tabName = this.ui.find('.header tr td div.on input').val();
+		tabName2 = this.ui.find('.body.large .tabs .main-tabs div.tab div.on input').val();
+
+		this.ui.find('.large-header .activeTabName').text(tabName2)
 
 		this.ui.find('.content[data-content="' + tabID + '"]').scrollTop = this.ui.find('.content[data-content="' + tabID + '"]').scrollHeight;
 
 		ChatBoxSettings.updateTab(this.activeTab, tabName);
+		if (this.ui.find('.body.large').css('display') !== 'none') {
+			ChatBoxSettings.updateTab(this.activeTab, tabName2);
+		}
 	}
 
 	/**
@@ -713,6 +899,9 @@ define(function (require) {
 		var messageBox = this.ui.find('.input .message');
 		var nickBox = this.ui.find('.input .username');
 		this.ui.find('.header tr td div.on input').on('keyup', function () {
+			ChatBoxSettings.updateTab(ChatBox.activeTab, this.value);
+		});
+		this.ui.find('.body.large .tabs .main-tabs div.tab div.on input').on('keyup', function () {
 			ChatBoxSettings.updateTab(ChatBox.activeTab, this.value);
 		});
 		switch (event.which) {
@@ -1042,6 +1231,7 @@ define(function (require) {
 			if (text.length > 0 && TabNum.toString() !== ChatBox.activeTab.toString() && TabNum.toString() !== _preferences.activeTab.toString()) {
 				ChatBoxTabSettings.updateAlerter(TabNum, true)
 				ChatBox.ui.find('table.header tr td.tab[data-tab="' + TabNum + '"] div input').addClass('blink')
+				ChatBox.ui.find('.body.large .tabs .main-tabs div.tab[data-tab="' + TabNum + '"] div input').addClass('blink')
 
 			}
 		});
@@ -1075,13 +1265,13 @@ define(function (require) {
 
 			case 1:
 				this.ui.show();
-				this.ui.find('.header, .body').hide();
+				this.ui.find('.header, .body.small').hide();
 				this.ui.find('.input').addClass('fix');
 				break;
 
 			default:
 				this.ui.find('.input').removeClass('fix');
-				this.ui.find('.header, .body').show();
+				this.ui.find('.header, .body.small').show();
 				break;
 		}
 
