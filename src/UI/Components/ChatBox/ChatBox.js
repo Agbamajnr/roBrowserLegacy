@@ -779,6 +779,8 @@ define(function (require) {
 				</div>
 			</div>
 			`)
+
+			ChatBoxTabSettings.updateCellPosition(tabID)
 		}
 	}
 
