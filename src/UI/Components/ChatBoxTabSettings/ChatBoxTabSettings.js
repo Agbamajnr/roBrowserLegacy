@@ -167,14 +167,16 @@ define(function (require) {
     };
 
     ChatBoxTabSettings.removeTab = function removeTab(tabID) {
-        ChatBoxTabSettings.tabs[tabID]
-        delete ChatBoxTabSettings.tabs[tabID];
-        this.ui.find('#settings_list .tab[data-tab="' + tabID + '"]').remove()
+        var confirmDelete = confirm('Do you want to delete Tab: ' + ChatBoxTabSettings.tabs[tabID].name)
+        if (confirmDelete == true) {
+            ChatBoxTabSettings.tabs[tabID]
+            delete ChatBoxTabSettings.tabs[tabID];
+            this.ui.find('#settings_list .tab[data-tab="' + tabID + '"]').remove()
+        }
     }
 
 
     ChatBoxTabSettings.updateCellPosition = function updateCellPosition(tabID) {
-        console.log(tabID)
         var parentNode = this.ui.find('#settings_list')
         var childNode = this.ui.find('#settings_list .tab[data-tab="' + tabID + '"]')
         if (childNode && ChatBoxTabSettings.tabs[tabID]) {

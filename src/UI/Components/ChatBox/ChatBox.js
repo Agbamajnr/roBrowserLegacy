@@ -168,6 +168,45 @@ define(function (require) {
 			left: Math.min(Math.max(0, _preferences.x), Renderer.width - this.ui.width())
 		});
 
+		// show large chatbox on portrait mode
+		const portrait = window.matchMedia("(orientation: portrait)").matches;
+		if (portrait == true) {
+			ChatBox.toggleLargeChatBox(true)
+			this.ui.find('#chatbox').css({
+				'width': '100vw !important'
+			})
+			this.ui.find('.body.large').css({
+				'width': '100% !important'
+			})
+			this.ui.find('.large-header').css({
+				'width': '100% !important'
+			})
+			this.ui.find('.input.large').css({
+				'width': '100% !important'
+			})
+		}
+
+		window.matchMedia("(orientation: portrait)").addEventListener("change", e => {
+			const portrait = e.matches;
+
+			if (portrait == true) {
+				ChatBox.toggleLargeChatBox(true)
+				this.ui.find('#chatbox').css({
+					'width': '100vw !important'
+				})
+				this.ui.find('.body.large').css({
+					'width': '100% !important'
+				})
+				this.ui.find('.large-header').css({
+					'width': '100% !important'
+				})
+				this.ui.find('.input.large').css({
+					'width': '100% !important'
+				})
+			}
+		});
+
+
 		this.magnet.TOP = _preferences.magnet_top;
 		this.magnet.BOTTOM = _preferences.magnet_bottom;
 		this.magnet.LEFT = _preferences.magnet_left;
