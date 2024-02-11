@@ -853,6 +853,7 @@ define(function (require) {
 		this.ui.find('.large-header .activeTabName').text(tabName2)
 
 		this.ui.find('.content[data-content="' + tabID + '"]').scrollTop = this.ui.find('.content[data-content="' + tabID + '"]').scrollHeight;
+		this.ui.find('.body.large .contentwrapper .content[data-content="' + tabID + '"]').scrollTop = this.ui.find('.body.large .contentwrapper .content[data-content="' + tabID + '"]').scrollHeight;
 
 		ChatBoxSettings.updateTab(this.activeTab, tabName);
 		if (this.ui.find('.body.large').css('display') !== 'none') {
@@ -868,7 +869,9 @@ define(function (require) {
 		this.ui.find('.input .message').focus();
 
 		var content = this.ui.find('.content.active');
+		var contentLarge = this.ui.find('.body.large .contentwrapper .content.active');
 		content[0].scrollTop = content[0].scrollHeight;
+		contentLarge[0].scrollTop = contentLarge[0].scrollHeight;
 	};
 
 
@@ -1029,6 +1032,7 @@ define(function (require) {
 				this.updateHeight(false);
 				// scroll down when resize
 				this.ui.find('.content')[this.activeTab].scrollTop = this.ui.find('.content')[this.activeTab].scrollHeight;
+				this.ui.find('.body.large .contentwrapper .content')[this.activeTab].scrollTop = this.ui.find('.body.large .contentwrapper .content')[this.activeTab].scrollHeight;
 				break;
 
 			// Send message
@@ -1263,10 +1267,14 @@ define(function (require) {
 				return false;
 			}
 
-			const lastMessageHeight = this.ui.find('.content[data-content="' + TabNum + '"] > div:last-child')[0].scrollHeight;
+			const lastMessageHeightSmall = this.ui.find('.content[data-content="' + TabNum + '"] > div:last-child')[0].scrollHeight;
+			const lastMessageHeightLarge = this.ui.find('.content[data-content="' + TabNum + '"] > div:last-child')[1].scrollHeight;
 
-			if (shouldScrollDown(content[0], lastMessageHeight, content.height())) {
+			if (shouldScrollDown(content[0], lastMessageHeightSmall, content.height())) {
 				content[0].scrollTop = content[0].scrollHeight;
+			}
+			if (shouldScrollDown(content[1], lastMessageHeightLarge, this.ui.find('.body.large .contentwrapper .content[data-content="' + TabNum + '"]').height())) {
+				content[1].scrollTop = content[1].scrollHeight;
 			}
 
 			if (text.length > 0 && TabNum.toString() !== ChatBox.activeTab.toString() && TabNum.toString() !== _preferences.activeTab.toString()) {
@@ -1288,11 +1296,13 @@ define(function (require) {
 		_heightIndex = (_heightIndex + 1) % HeightList.length;
 
 		var content = this.ui.find('.contentwrapper');
+		var contentLarge = this.ui.find('.body.large .contentwrapper');
 		var height = HeightList[_heightIndex];
 		var top = parseInt(this.ui.css('top'), 10);
 
 		this.ui.css('top', top - (height - content.height()));
 		content.height(height);
+		contentLarge.height(height);
 
 		// Don't remove UI
 		if (_heightIndex === 0 && AlwaysVisible) {
@@ -1317,6 +1327,7 @@ define(function (require) {
 		}
 
 		content[this.activeTab].scrollTop = content[this.activeTab].scrollHeight;
+		contentLarge[this.activeTab].scrollTop = contentLarge[this.activeTab].scrollHeight;
 	};
 
 
@@ -1456,6 +1467,7 @@ define(function (require) {
 				}
 				// scroll down when resize
 				ChatBox.ui.find('.content')[ChatBox.activeTab].scrollTop = ChatBox.ui.find('.content')[ChatBox.activeTab].scrollHeight;
+				ChatBox.ui.find('.body.large .contentwrapper .content')[ChatBox.activeTab].scrollTop = ChatBox.ui.find('.body.large .contentwrapper .content')[ChatBox.activeTab].scrollHeight;
 			}
 
 			function fixHeight(height) {
