@@ -614,7 +614,7 @@ define(function (require) {
 
 
 	ChatBox.removeTab = function removeTab() {
-		ChatBoxTabSettings.removeTab(this.activeTab);
+		// ChatBoxTabSettings.removeTab(this.activeTab);
 
 		this.ui.find('table.header tr td.tab[data-tab="' + this.activeTab + '"]').remove();
 		this.ui.find('.body.large .tabs .main-tabs div.tab[data-tab="' + this.activeTab + '"]').remove();
@@ -626,7 +626,9 @@ define(function (require) {
 		var _elem = this.ui.find('table.header tr td.tab');
 		_elem = this.ui.find('table.header tr td.tab')[_elem.length - 1];
 		var _elem2 = this.ui.find('.body.large .tabs .main-tabs div.tab');
-		_elem2 = this.ui.find('.body.large .tabs .main-tabs div.tab')[_elem.length - 1];
+		if (_elem2) {
+			_elem2 = this.ui.find('.body.large .tabs .main-tabs div.tab')[_elem2.length - 1];
+		}
 
 		// Use delete instead of splice to avoid ID messup and make our life eastier.
 		delete ChatBoxSettings.tabOption[this.activeTab];
@@ -634,7 +636,9 @@ define(function (require) {
 		this.tabCount--;
 
 		ChatBox.switchTab(_elem.dataset.tab);
-		ChatBox.switchTab(_elem2.dataset.tab);
+		if (_elem2) {
+			ChatBox.switchTab(_elem2.dataset.tab);
+		}
 
 		tabName = this.ui.find('.header tr td div.on input').val();
 		tabName2 = this.ui.find('.body.large .tabs .main-tabs div.tab div.on input').val();
@@ -704,7 +708,7 @@ define(function (require) {
 		this.ui.find('table.header tr .opttab').before(`
 			<td class="tab" data-tab="${tabID}">
 				<div class="on">
-					<input readonly="true" id="tab-input" type="text" value="${tabName}"/>
+					<input readonly id="tab-input" type="text" value="${tabName}"/>
 				</div>
 			</td>
 		`);
@@ -712,7 +716,7 @@ define(function (require) {
 		this.ui.find('.body.large .tabs .main-tabs').append(`
 			<div class="tab" data-tab="${tabID}">
 				<div class="on">
-					<input readonly="true" id="tab-input" type="text" value="${tabName}"/>
+					<input readonly id="tab-input" type="text" value="${tabName}"/>
 				</div>
 			</div>
 		`);
@@ -736,7 +740,6 @@ define(function (require) {
 
 		this.ui.find('table.header tr td.tab[data-tab="' + tabID + '"] div input').on('click', function () {
 			ChatBox.switchTab(tabID);
-
 			ChatBox.toggleLargeChatBox(true)
 
 			ChatBoxTabSettings.updateAlerter(tabID, false)
@@ -755,11 +758,11 @@ define(function (require) {
 
 		this.ui.find('table.header tr td.tab[data-tab="' + tabID + '"] div input').on('blur', function () {
 			var input = ChatBox.ui.find('table.header tr td.tab[data-tab="' + tabID + '"] div input')
-			input.attr('readonly', true)
+			input.attr('readonly', '')
 		});
 		this.ui.find('.body.large .tabs .main-tabs div.tab[data-tab="' + tabID + '"] div input').on('blur', function () {
 			var input = ChatBox.ui.find('.body.large .tabs .main-tabs div.tab[data-tab="' + tabID + '"] div input')
-			input.attr('readonly', true)
+			input.attr('readonly', '')
 		});
 
 
@@ -807,17 +810,73 @@ define(function (require) {
 			parentNode.prepend(`
 			<td class="tab" data-tab="${tabID}">
 				<div class="on">
-					<input readonly="true" type="text" id="tab-input" value="${this.tabs[tabID].name}"/>
+					<input readonly type="text" id="tab-input" value="${this.tabs[tabID].name}"/>
 				</div>
 			</td>
 			`)
 			parentNode2.prepend(`
 			<div class="tab" data-tab="${tabID}">
 				<div class="on">
-					<input readonly="true" type="text" id="tab-input" value="${this.tabs[tabID].name}"/>
+					<input readonly type="text" id="tab-input" value="${this.tabs[tabID].name}"/>
 				</div>
 			</div>
 			`)
+
+			this.ui.find('table.header tr td.tab[data-tab="' + tabID + '"] div input').on('dblclick', function () {
+				var input = ChatBox.ui.find('table.header tr td.tab[data-tab="' + tabID + '"] div input')
+				if (input) {
+					input.removeAttr('readonly')
+					input.focus()
+				}
+			});
+			this.ui.find('.body.large .tabs .main-tabs div.tab[data-tab="' + tabID + '"] div input').on('dblclick', function () {
+				var input = ChatBox.ui.find('.body.large .tabs .main-tabs div.tab[data-tab="' + tabID + '"] div input')
+				if (input) {
+					input.removeAttr('readonly')
+					input.focus()
+				}
+			});
+
+
+
+			this.ui.find('table.header tr td.tab[data-tab="' + tabID + '"] div input').on('click', function () {
+				ChatBox.switchTab(tabID);
+				ChatBox.toggleLargeChatBox(true)
+
+				ChatBoxTabSettings.updateAlerter(tabID, false)
+				ChatBox.ui.find('table.header tr td.tab[data-tab="' + tabID + '"] div input').removeClass('blink')
+			});
+			this.ui.find('.body.large .tabs .main-tabs div.tab[data-tab="' + tabID + '"] div input').on('click', function () {
+				ChatBox.switchTab(tabID);
+
+				ChatBox.toggleLargeChatBox(true)
+
+				ChatBoxTabSettings.updateAlerter(tabID, false)
+				ChatBox.ui.find('.body.large .tabs .main-tabs div.tab[data-tab="' + tabID + '"] div input').removeClass('blink')
+			});
+
+
+
+			this.ui.find('table.header tr td.tab[data-tab="' + tabID + '"] div input').on('blur', function () {
+				var input = ChatBox.ui.find('table.header tr td.tab[data-tab="' + tabID + '"] div input')
+				input.attr('readonly', '')
+			});
+			this.ui.find('.body.large .tabs .main-tabs div.tab[data-tab="' + tabID + '"] div input').on('blur', function () {
+				var input = ChatBox.ui.find('.body.large .tabs .main-tabs div.tab[data-tab="' + tabID + '"] div input')
+				input.attr('readonly', '')
+			});
+
+
+			this.ui.find('table.header tr td.tab[data-tab="' + tabID + '"] div input').on('change', function () {
+				ChatBox.tabs[tabID].name = this.value;
+				ChatBox.ui.find('.large-header .activeTabName').text(this.value)
+				ChatBoxTabSettings.updateTabName(tabID, this.value)
+			});
+			this.ui.find('.body.large .tabs .main-tabs div.tab[data-tab="' + tabID + '"] div input').on('change', function () {
+				ChatBox.tabs[tabID].name = this.value;
+				ChatBox.ui.find('.large-header .activeTabName').text(this.value)
+				ChatBoxTabSettings.updateTabName(tabID, this.value)
+			});
 
 			ChatBoxTabSettings.updateCellPosition(tabID)
 		}
